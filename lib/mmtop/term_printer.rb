@@ -136,7 +136,7 @@ module MMTop
     end
 
     def save_query(process)
-      if process.time > 10
+      if process.time > 60
         File.open("/var/imente/log/log_mysqlSlowQuery.log",'w') { |file| file.write(
           Time.now.strftime("%Y/%m/%d %I:%M:%S - 0000000 ERROR: [mmtop]: " +
           process.host.name + ": " + process.db +
