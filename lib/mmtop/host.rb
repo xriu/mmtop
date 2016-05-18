@@ -11,6 +11,7 @@ module MMTop
       m2opts[:port] = options['port'] if options['port']
       m2opts[:connect_timeout] = 1
       m2opts[:reconnect] = true
+      m2opts[:secure_auth] = false
       @options = options
       @name = hostname
       @display_name = @name
