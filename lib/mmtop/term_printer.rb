@@ -45,7 +45,7 @@ module MMTop
 
     def print_footer
       footer_banner = (" mmtop version #{MMTop::VERSION} ".dark_gray) + "...".dark_gray + " press \"p\" to pause ".dark_gray
-      left_border_size = (@x - 2 - footer_banner.size) / 2 
+      left_border_size = (@x - 2 - footer_banner.size) / 2
       right_border_size = @x - 2 - footer_banner.size - left_border_size
       puts corner + (edge * left_border_size) + footer_banner + (edge * right_border_size) + corner
     end
@@ -75,7 +75,7 @@ module MMTop
       indexes = Array(indexes)
       max_size = indexes.inject(0) { |s, idx| s + table_header_columns[idx].size }
       max_size += sep_fill.size * (indexes.size - 1)
-	
+
       if str.size < max_size
         column_value_with_fill(indexes.first, max_size, str, fill, align)
       else
@@ -135,6 +135,18 @@ module MMTop
       print "\033[H\033[2J"
     end
 
+    def save_query(process)
+      if process.time > 10
+        File.open("/var/imente/log/log_mysqlSlowQuery.log",'w') { |file| file.write(
+          Time.now.strftime("%Y/%m/%d %I:%M:%S - 0000000 ERROR: [mmtop]: " +
+          process.host.name + ": " + process.db +
+          ", time: #{process.time}" +
+          ", client: " + process.client +
+          ". query: " + process.sql))
+        }
+      end
+    end
+
     def print_process(p)
       str = pipe + " " + column_value(0, p.client, ' ', :right)
       str += info_sep + column_value(1, p.id ? p.id.to_s : '')
@@ -150,11 +162,11 @@ module MMTop
 
       display_name = info.host.display_name
       if info.host.dead?
-        display_name = (display_name + "!").red 
+        display_name = (display_name + "!").red
       end
 
       str = pipe + " " + column_value([0, 1, 2], display_name + " ", "-".dark_gray)
-    
+
       str += info_sep + column_value(3, info.connections.size.to_s)
       str += info_sep + column_value(4, format_slave_status(info.slave_status))
       str += info_sep + column_value(5, format_slave_delay(info.slave_status))
@@ -168,6 +180,7 @@ module MMTop
       puts str
       info.processlist.each do |p|
         print_process p
+        save_query p
       end
     end
 
