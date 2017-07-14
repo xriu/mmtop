@@ -12,6 +12,7 @@ simultaneously.
 
 #### Installation
 
+  * sudo apt-get install ruby-dev
   * gem install mmtop
   * copy mmtop_example to ~/.mmtop_config, edit as needed.
   * run "mmtop"
